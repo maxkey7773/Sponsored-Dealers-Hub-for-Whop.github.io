@@ -1,6 +1,9 @@
 import { WhopApp } from "@whop/react/components";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { NotificationProvider } from "@/components/NotificationProvider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -14,21 +17,25 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-	title: "Whop App",
-	description: "My Whop App",
+	title: "InfluencerHub - Connect Brands & Influencers",
+	description: "Secure platform connecting brands with influencers. Escrow payments, direct messaging, and seamless collaboration.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
 	children,
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
+	const session = await getServerSession(authOptions);
+
 	return (
 		<html lang="en" suppressHydrationWarning>
 			<body
-				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+				className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50`}
 			>
-				<WhopApp>{children}</WhopApp>
+				<NotificationProvider session={session}>
+					<WhopApp>{children}</WhopApp>
+				</NotificationProvider>
 			</body>
 		</html>
 	);
